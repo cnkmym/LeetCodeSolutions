@@ -8,28 +8,24 @@ import java.util.Set;
  * next; ListNode(int x) { val = x; } }
  */
 public class Solution {
-	Set<Integer> values;
-
 	public ListNode deleteDuplicates(ListNode head) {
 		// naive solution
 		// use just a set to check if current value has met already
-		values = new HashSet<Integer>();
+		// actually you do not need a set, since the list is sorted
 		ListNode previous = null;
 		ListNode current = head;
 		while (current != null) {
-			if (values.contains(current.val)) {
-				// current node should be removed
-			} else {
-				values.add(current.val);
-				// pay much attention to pointer shift
-				if (previous != null) {
+			if (previous != null) {
+				if (current.val != previous.val) {
 					previous.next = current;
+					previous = current;
 				}
+			}else{
 				previous = current;
 			}
 			current = current.next;
 		}
-		//pay attention to close the list when using pointer shift strategy
+		// pay attention to close the list when using pointer shift strategy
 		if (previous != null) {
 			previous.next = null;
 		}
