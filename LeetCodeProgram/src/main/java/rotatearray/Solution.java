@@ -45,9 +45,29 @@ public class Solution {
 		if (nums.length == 0) {
 			return;
 		}
-		int previous = Integer.MIN_VALUE;
-		for (int i = 0; i < k; i++) {
+		k = k % nums.length;
+		if (k == 0) {
+			return;
+		}
+		int count = 0;
+		int startPos = 0;
+		int val = nums[startPos];
+		int currentIndex = startPos;
+		while (count < nums.length) {
 			// O(1) extra space?
+			int newPos = (currentIndex + k) % nums.length;
+			int tmp = nums[newPos];
+			nums[newPos] = val;
+			count++;
+			if (newPos == startPos) {
+				currentIndex = startPos + 1;
+				startPos = currentIndex;
+				val = nums[startPos];
+			} else {
+				currentIndex = newPos;
+				val = tmp;
+			}
 		}
 	}
+
 }
