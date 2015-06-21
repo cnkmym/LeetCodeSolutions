@@ -11,66 +11,46 @@ public class Solution {
 		char[] chars = path.toCharArray();
 		length = path.length();
 		directories = new Stack<String>();
-
-		while (index < length) {
-			if (path.substring(index, Math.min(length, index + 3)).equals("../")) {
-				// parent folder
-				if (!directories.isEmpty()) {
-					if (directories.peek().equals("/")) {
-						directories.pop();
-					}
-					if (!directories.isEmpty()) {
-						directories.pop();
+		StringBuilder substring = new StringBuilder();
+		for (int i = 0; i < length; i++) {
+			if (chars[i] == '.') {
+				// do nothing
+			} else if (chars[i] == '/') {
+				if (i > 2) {
+					if (chars[i - 2] == '.' && chars[i - 1] == '.') {
+						// "../" type
+						if (!directories.isEmpty()) {
+							directories.pop();
+						}
+						continue;
 					}
 				}
-				index = index + 3;
-				continue;
-			} else if (path.substring(index, Math.min(length, index + 2)).equals("./")) {
-				// current folder
-				index = index + 2;
-				continue;
-			} else if (path.substring(index, Math.min(length, index + 1)).equals("/")) {
-				// new directory
-				if (directories.isEmpty() || !directories.peek().equals("/")) {
-					directories.push("/");
-				} else if (!directories.peek().endsWith("/")) {
-					String peek = directories.pop() + "/";
-					directories.push(peek);
+				if (i > 1) {
+					if (chars[i - 1] == '.') {
+						// "./" type
+						continue;
+					} else if (chars[i - 1] == '/') {
+						// "//" type
+						continue;
+					}
 				}
-				index++;
+				if (substring.length() > 0) {
+					directories.push(substring.toString());
+				}
+				substring = new StringBuilder();
+				substring.append(chars[i]);
 			} else {
-				StringBuilder sb = new StringBuilder();
-				while (index < length) {
-					if (chars[index] != '.' && chars[index] != '/') {
-						sb.append(chars[index]);
-					} else {
-						break;
-					}
-					index++;
-				}
-				if (sb.length() > 0) {
-					if (directories.isEmpty()) {
-						directories.push("/");
-					}
-					directories.push(sb.toString());
-				}
+				substring.append(chars[i]);
 			}
 		}
 
-		while (true) {
-			if (directories.isEmpty()) {
-				directories.push("/");
-				continue;
-			} else if (directories.size() == 1 && directories.peek().equals("/")) {
-				break;
-			} else if (directories.peek().equals("/")) {
-				directories.pop();
-			} else {
-				break;
-			}
+		String remain = substring.toString();
+		if (!remain.equals("/")) {
+			directories.push(substring.toString());
 		}
 
 		return join();
+
 	}
 
 	private String join() {
@@ -79,6 +59,9 @@ public class Solution {
 			forPrint.push(directories.pop());
 		}
 		StringBuilder sb = new StringBuilder();
+		if (forPrint.isEmpty() || !forPrint.peek().startsWith("/")) {
+			sb.append("/");
+		}
 		while (!forPrint.isEmpty()) {
 			sb.append(forPrint.pop());
 		}
