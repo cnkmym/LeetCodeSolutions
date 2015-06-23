@@ -7,49 +7,48 @@ public class Solution {
 	int length = 0;
 	Stack<String> directories;
 
+	private void append(char[] chars, int i, int lastDirectoryPos) {
+		int count = i - lastDirectoryPos;
+		if (count <= 1) {
+			return;
+		}
+		String dir = String.valueOf(chars, lastDirectoryPos + 1, Math.min(count, chars.length - lastDirectoryPos-1));
+		if (dir.equals("./") || dir.equals(".")) {
+			return;
+		}
+		if (directories.isEmpty()) {
+			directories.push("/");
+		}
+		if (dir.equals("../") || dir.equals("..")) {
+			if (directories.size() > 1) {
+				directories.pop();
+			}
+		} else {
+			directories.push(dir);
+		}
+	}
+
 	public String simplifyPath(String path) {
 		char[] chars = path.toCharArray();
 		length = path.length();
 		directories = new Stack<String>();
-		StringBuilder substring = new StringBuilder();
+		directories.push("/");
+		int lastDirectoryPos = -1;
 		for (int i = 0; i < length; i++) {
-			if (chars[i] == '.') {
-				// do nothing
-			} else if (chars[i] == '/') {
-				if (i > 2) {
-					if (chars[i - 2] == '.' && chars[i - 1] == '.') {
-						// "../" type
-						if (!directories.isEmpty()) {
-							directories.pop();
-						}
-						continue;
-					}
-				}
-				if (i > 1) {
-					if (chars[i - 1] == '.') {
-						// "./" type
-						continue;
-					} else if (chars[i - 1] == '/') {
-						// "//" type
-						continue;
-					}
-				}
-				if (substring.length() > 0) {
-					directories.push(substring.toString());
-				}
-				substring = new StringBuilder();
-				substring.append(chars[i]);
-			} else {
-				substring.append(chars[i]);
+			if (chars[i] == '/') {
+				append(chars, i, lastDirectoryPos);
+				lastDirectoryPos = i;
 			}
 		}
 
-		String remain = substring.toString();
-		if (!remain.equals("/")) {
-			directories.push(substring.toString());
+		append(chars, length, lastDirectoryPos);
+
+		String ret = join();
+		while (ret.length() > 1 && ret.charAt(ret.length() - 1) == '/') {
+			ret = ret.substring(0, ret.length() - 1);
 		}
 
-		return join();
+		return ret;
 
 	}
 
