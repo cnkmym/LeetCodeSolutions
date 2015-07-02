@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class MyTest {
-	Solution s;
+	Solution2 s;
 	ListNode n1 = new ListNode(1);
 	ListNode n2 = new ListNode(2);
 	ListNode n3 = new ListNode(2);
@@ -19,7 +19,7 @@ public class MyTest {
 
 	@Before
 	public void init() {
-		s = new Solution();
+		s = new Solution2();
 		n1.next = n2;
 		n2.next = n3;
 		n3.next = n4;
