@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import pathsum2.Solution;
+
 public class MyTest {
 	Solution s;
 
